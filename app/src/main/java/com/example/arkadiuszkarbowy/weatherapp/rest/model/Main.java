@@ -5,10 +5,10 @@ package com.example.arkadiuszkarbowy.weatherapp.rest.model;
  */
 public class Main {
     public final double temp;
-    public final int pressure;
+    public final double pressure;
     public final int humidity;
 
-    public Main(double temp, int pressure, int humidity) {
+    public Main(double temp, double pressure, int humidity) {
         this.temp = temp;
         this.pressure = pressure;
         this.humidity = humidity;
