@@ -1,8 +1,12 @@
 package com.example.arkadiuszkarbowy.weatherapp.rest.model;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,14 +14,16 @@ import java.util.List;
  */
 public class Detail {
     public final long dt;
+    @SerializedName("dt_txt")
+    public final String dtTxt;
     public final Main main;
     public final Wind wind;
-
     @SerializedName("weather")
     public final List<Description> description;
 
-    public Detail(long dt, Main main, Wind wind, List<Description> description) {
+    public Detail(long dt, String dtTxt, Main main, Wind wind, List<Description> description) {
         this.dt = dt;
+        this.dtTxt = dtTxt;
         this.main = main;
         this.wind = wind;
         this.description = description;
@@ -34,6 +40,10 @@ public class Detail {
         calendar.setTimeInMillis(dt*1000);
         String[] days = new String[]{"nd", "pn", "wt", "sr", "cz", "pt", "so"};
         return days[calendar.get(Calendar.DAY_OF_WEEK) - 1];
+    }
+
+    public String getTimeHm(){
+        return new SimpleDateFormat("HH:mm").format(new Date(dt*1000));
     }
 
     public String getIconCode() {

@@ -14,7 +14,6 @@ import com.example.arkadiuszkarbowy.weatherapp.main.Cities;
 import com.example.arkadiuszkarbowy.weatherapp.R;
 
 public class WidgetDialog extends Activity {
-    public static final String DATA_CITY_NAME = "city_name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,7 @@ public class WidgetDialog extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent updateLocation = new Intent(getApplicationContext(), Widget.class);
                 updateLocation.setAction(Widget.ACTION_UPDATE_LOCATION);
-                updateLocation.putExtra(DATA_CITY_NAME, items[position]);
+                updateLocation.putExtra(Widget.DATA_CITY_NAME, items[position]);
                 PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), 0, updateLocation, PendingIntent
                         .FLAG_CANCEL_CURRENT);
                 try {

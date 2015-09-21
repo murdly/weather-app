@@ -6,9 +6,14 @@ import com.example.arkadiuszkarbowy.weatherapp.rest.model.City;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Detail;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by arkadiuszkarbowy on 17/09/15.
@@ -56,15 +61,32 @@ public class Forecast3 {
         return day3;
     }
 
+    public ArrayList<Day> get3Days() {
+        ArrayList<Day> days = new ArrayList<>();
+        days.add(day1);
+        days.add(day2);
+        days.add(day3);
+        return days;
+    }
+
     public class Day {
-        List<Detail> details;
+        private List<Detail> details;
+        private Map<String, Float> temps;
         int tempMax;
         int tempMin;
 
         public Day(List<Detail> details) {
             this.details = details;
+            temps = new LinkedHashMap<>();
             tempMax = countMax();
             tempMin = countMin();
+        }
+
+        public Map<String, Float> collectDailyTemps() {
+            for (Detail d : details)
+                temps.put(d.getTimeHm(), (float) d.getTemp());
+
+            return temps;
         }
 
         private int countMax() {

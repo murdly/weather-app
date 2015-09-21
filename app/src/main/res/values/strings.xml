@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">WeatherApp</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="choose_city">Wybierz miasto</string>
     <string name="ok">Wybierz</string>
@@ -13,8 +12,13 @@
     <string name="d5">pt</string>
     <string name="d6">so</string>
     <string name="d7">nd</string>
+
     <string name="celcius">\u00B0C</string>
     <string name="degree">\u00B0</string>
+    <string name="perc">%</string>
+    <string name="ms"> m/s</string>
+    <string name="hpa"> hPa</string>
+    <string name="unk">-</string>
 
     <string-array name="days">
         <item>@string/d7</item>
@@ -26,4 +30,12 @@
         <item>@string/d6</item>
     </string-array>
     <string name="title_activity_widget_dialog">WidgetDialog</string>
+
+    <string name="temp">Temperatura</string>
+    <string name="temp_max">Temp. max:</string>
+    <string name="temp_min">Temp. min:</string>
+    <string name="pressure">Ciśnienie:</string>
+    <string name="humidity">Wilgotność:</string>
+    <string name="wind">Wiatr:</string>
+
 </resources>

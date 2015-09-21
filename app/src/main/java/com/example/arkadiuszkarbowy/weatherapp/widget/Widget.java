@@ -31,9 +31,9 @@ import retrofit.Response;
  */
 public class Widget extends AppWidgetProvider {
     public static final String ACTION_UPDATE_LOCATION = "update_location";
+    public static final String DATA_CITY_NAME = "city_name";
     private static final int UPDATE_WEATHER = 1;
     private static final int UPDATE_FORECAST = 2;
-    private static final String CURRENT_CITY = "current_city";
 
     private String mCity = Cities.DEFAULT_CITY;
     private Context mContext;
@@ -57,14 +57,14 @@ public class Widget extends AppWidgetProvider {
         mContext = context;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        mCity = prefs.getString(CURRENT_CITY, Cities.DEFAULT_CITY);
+        mCity = prefs.getString(MainActivity.CURRENT_CITY, Cities.DEFAULT_CITY);
         Log.d("Widget", "onReceive for city " + mCity);
 
         if (intent.getAction().equals(ACTION_UPDATE_LOCATION))
-            mCity = intent.getStringExtra(WidgetDialog.DATA_CITY_NAME);
+            mCity = intent.getStringExtra(DATA_CITY_NAME);
 
         Log.d("Widget", "current city is " + mCity);
-        prefs.edit().putString(CURRENT_CITY, mCity).commit();
+        prefs.edit().putString(MainActivity.CURRENT_CITY, mCity).commit();
 
 
         RestClient restClient = new RestClient();
@@ -132,7 +132,7 @@ public class Widget extends AppWidgetProvider {
         views.setTextViewText(R.id.city, mCity);
 
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, new Intent(context,
-                WidgetDialog.class), 0);
+                WidgetDialog.class), PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.city, configPendingIntent);
 
         return views;
@@ -160,8 +160,11 @@ public class Widget extends AppWidgetProvider {
 
         views.setViewVisibility(R.id.content, View.VISIBLE);
         views.setViewVisibility(R.id.loading, View.GONE);
-        PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, new Intent(context,
-                MainActivity.class), 0);
+
+        Intent intent = new Intent(context, MainActivity.class);
+//        intent.putExtra(MainActivity.CURRENT_CITY, mCity);
+//        Log.d("Widget", "sending city" + mCity);
+        PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.widget_frame, configPendingIntent);
         return views;
     }

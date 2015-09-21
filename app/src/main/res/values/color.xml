@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="green">#A7E560</color>
+    <color name="temp_bg">#ECB84E</color>
     <color name="red">#571616</color>
     <color name="dark_red">#5E4D4D</color>
     <color name="widget_bg">#F9F8FF</color>
