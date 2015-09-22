@@ -7,9 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.example.arkadiuszkarbowy.weatherapp.R;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
@@ -18,7 +15,6 @@ import com.example.arkadiuszkarbowy.weatherapp.rest.service.ApiService;
 import com.example.arkadiuszkarbowy.weatherapp.rest.service.RestClient;
 import com.example.arkadiuszkarbowy.weatherapp.widget.IconMatcher;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import retrofit.Call;
@@ -29,10 +25,7 @@ public class CurrentFragment extends Fragment implements WeatherFragment {
     private static final String ARG_CITY = "city";
 
     private String mCity;
-    private ImageView mIcon;
-    private TextView mTemp;
-    private LinearLayout mNext3Days;
-
+    private WeatherBriefController mWeatherBrief;
     private OnFragmentDataListener mListener;
 
     public static CurrentFragment newInstance(String city) {
@@ -58,23 +51,22 @@ public class CurrentFragment extends Fragment implements WeatherFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_current, container, false);
-        mIcon = (ImageView) view.findViewById(R.id.crr_icon);
-        mTemp = (TextView) view.findViewById(R.id.crr_temp);
-        createNext3DaysView(view, inflater);
+        WeatherBriefView briefView = (WeatherBriefView) view.findViewById(R.id.weather_brief);
+        mWeatherBrief = new WeatherBriefController(getActivity(), briefView);
+        mWeatherBrief.setOnDaySelectedListener(mOnDaySelectedListener);
+
         return view;
     }
 
-    private void createNext3DaysView(View view, LayoutInflater inflater) {
-        mNext3Days = (LinearLayout) view.findViewById(R.id.next_3_days);
-        for (int i = 0; i < 3; i++) {
-            View daily = inflater.inflate(R.layout.daily, null);
-            daily.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-            mNext3Days.addView(daily);
+    private DayItemView.OnClickListener mOnDaySelectedListener = new DayItemView.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            mWeatherBrief.setSelected((DayItemView) v);
+            mListener.onChartUpdate(mWeatherBrief.collectTempsOfSelectedDay());
+            mListener.onWeatherInfoUpdate(mWeatherBrief.createWeatherObject());
         }
-    }
+    };
 
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
@@ -94,60 +86,44 @@ public class CurrentFragment extends Fragment implements WeatherFragment {
     @Override
     public void updateDataFor(String city) {
         Log.d("CurrentFragment", city);
-
         RestClient rest = new RestClient();
         Call<Weather> call = rest.getApiService().weather(Cities.getId(city), ApiService.UNITS);
         call.enqueue(mCurrentWeather);
 
         Call<Forecast> call3 = rest.getApiService().forecast(Cities.getId(city), ApiService.UNITS);
         call3.enqueue(mForecast);
-
     }
 
     Callback<Weather> mCurrentWeather = new Callback<Weather>() {
         @Override
         public void onResponse(Response<Weather> response) {
-            Log.d("Weather", response.raw().toString());
+            Log.d("CurrentFragment", response.raw().toString());
             Weather w = response.body();
-            mIcon.setImageResource(IconMatcher.getDrawableId(w.getIconCode()));
-            mTemp.setText(w.getCurrentTemp() + getResources().getString(R.string.celcius));
+            mWeatherBrief.setCurrentTemp(w.getCurrentTemp());
+            mWeatherBrief.setCurrentIcon(IconMatcher.getDrawableId(w.getIconCode()));
             mListener.onWeatherInfoUpdate(w);
         }
 
         @Override
         public void onFailure(Throwable t) {
-            Log.d("Weather", "failure");
+            Log.d("CurrentFragment", " forecast failure");
         }
     };
 
     Callback<Forecast> mForecast = new Callback<Forecast>() {
         @Override
         public void onResponse(Response<Forecast> response) {
-            Log.d("Forecast", response.raw().toString());
-            Forecast3 f = new Forecast3(response.body());
-            buildNext3DaysView(f);
-            mListener.onChartUpdate(f.getDay1().collectDailyTemps());
+            Log.d("CurrentFragment", response.raw().toString());
+            Forecast3 dailyForecast = new Forecast3(response.body());
+            mWeatherBrief.assignForecast(dailyForecast);
+            mListener.onChartUpdate(dailyForecast.getDay1().collectDailyTemps());
         }
 
         @Override
         public void onFailure(Throwable t) {
-            Log.d("Forecast", "failure");
+            Log.d("CurrentFragment", "forecast failure");
         }
     };
-
-    private void buildNext3DaysView(Forecast3 forecast) {
-        ArrayList<Forecast3.Day> days = forecast.get3Days();
-        for (int i = 0; i < days.size(); i++) {
-            Forecast3.Day day = days.get(i);
-            View child = mNext3Days.getChildAt(i);
-            ((ImageView) child.findViewById(R.id.icon)).setImageResource(IconMatcher.getSmallDrawableId(day
-                    .getIconCode()));
-            ((TextView) child.findViewById(R.id.day_name)).setText(day.getDayName());
-            String degree = getActivity().getResources().getString(R.string.degree);
-            ((TextView) child.findViewById(R.id.temp_max)).setText(day.getTempMax() + degree);
-            ((TextView) child.findViewById(R.id.temp_min)).setText(day.getTempMin() + degree);
-        }
-    }
 
     public interface OnFragmentDataListener {
         void onWeatherInfoUpdate(Weather w);

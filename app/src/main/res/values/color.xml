@@ -6,4 +6,5 @@
     <color name="dark_red">#5E4D4D</color>
     <color name="widget_bg">#F9F8FF</color>
     <color name="widget_border">#80D9D9D9</color>
+    <color name="selection">#80D9D9D9</color>
 </resources>

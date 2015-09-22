@@ -1,7 +1,5 @@
 package com.example.arkadiuszkarbowy.weatherapp.main;
 
-import android.util.Log;
-
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.City;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Detail;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
@@ -9,8 +7,6 @@ import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +20,7 @@ public class Forecast3 {
 
 
     public Forecast3(Forecast combined) {
-        city = combined.city;
+        city = combined.getCity();
         split(combined);
     }
 
@@ -32,16 +28,16 @@ public class Forecast3 {
         int endDay1 = range(0, f);
         int endDay2 = range(endDay1 + 1, f);
         int endDay3 = range(endDay2 + 1, f);
-        day1 = new Day(f.list.subList(0, endDay1));
-        day2 = new Day(f.list.subList(endDay1, endDay2));
-        day3 = new Day(f.list.subList(endDay2, endDay3));
+        day1 = new Day(f.getList().subList(0, endDay1));
+        day2 = new Day(f.getList().subList(endDay1, endDay2));
+        day3 = new Day(f.getList().subList(endDay2, endDay3));
     }
 
     private static int range(int pos, Forecast f) {
-        int dayOfMonth = f.list.get(pos).getNumericDay();
+        int dayOfMonth = f.getList().get(pos).getNumericDay();
         int end = -1;
-        while (pos < f.list.size() && end == -1) {
-            if (f.list.get(pos).getNumericDay() != dayOfMonth)
+        while (pos < f.getList().size() && end == -1) {
+            if (f.getList().get(pos).getNumericDay() != dayOfMonth)
                 end = pos;
             pos++;
         }
@@ -69,6 +65,10 @@ public class Forecast3 {
         return days;
     }
 
+    public Day getDay(int i) {
+        return get3Days().get(i);
+    }
+
     public class Day {
         private List<Detail> details;
         private Map<String, Float> temps;
@@ -85,7 +85,6 @@ public class Forecast3 {
         public Map<String, Float> collectDailyTemps() {
             for (Detail d : details)
                 temps.put(d.getTimeHm(), (float) d.getTemp());
-
             return temps;
         }
 
@@ -119,7 +118,33 @@ public class Forecast3 {
         public int getTempMin() {
             return tempMin;
         }
+
+        public double getAvgWindSpeed() {
+            double total = 0;
+            for (Detail detail : details)
+                total += detail.getWind().getSpeed();
+
+            return round(total / details.size());
+        }
+
+        public double getAvgPressure() {
+            double total = 0;
+            for (Detail detail : details)
+                total += detail.getMain().getPressure();
+
+            return round(total / details.size());
+        }
+
+        public int getAvgHumidity() {
+            int total = 0;
+            for (Detail detail : details)
+                total += detail.getMain().getHumidity();
+
+            return total / details.size();
+        }
+
+        private double round(double val) {
+            return Math.round(val * 100) / 100;
+        }
     }
-
-
 }

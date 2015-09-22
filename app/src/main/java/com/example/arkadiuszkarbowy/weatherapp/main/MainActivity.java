@@ -141,11 +141,11 @@ public class MainActivity extends AppCompatActivity implements CurrentFragment.O
     @Override
     public void onWeatherInfoUpdate(Weather w) {
         String celcius = getResources().getString(R.string.celcius);
-        mTempMax.setText(w.main.tempMax + " " + celcius);
-        mTempMin.setText(w.main.tempMin + " " + celcius);
-        mWind.setText(w.wind.speed + " " + getResources().getString(R.string.ms));
-        mPressure.setText(w.main.pressure + " " + getResources().getString(R.string.hpa));
-        mHumidity.setText(w.main.humidity + " " + getResources().getString(R.string.perc));
+        mTempMax.setText(w.getMain().getTempMax() + " " + celcius);
+        mTempMin.setText(w.getMain().getTempMin() + " " + celcius);
+        mWind.setText(w.getWind().getSpeed() + " " + getResources().getString(R.string.ms));
+        mPressure.setText(w.getMain().getPressure() + " " + getResources().getString(R.string.hpa));
+        mHumidity.setText(w.getMain().getHumidity() + " " + getResources().getString(R.string.perc));
     }
 
     @Override

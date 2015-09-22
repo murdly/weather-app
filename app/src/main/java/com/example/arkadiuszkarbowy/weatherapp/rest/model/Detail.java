@@ -13,13 +13,13 @@ import java.util.List;
  * Created by arkadiuszkarbowy on 15/09/15.
  */
 public class Detail {
-    public final long dt;
+    private final long dt;
     @SerializedName("dt_txt")
-    public final String dtTxt;
-    public final Main main;
-    public final Wind wind;
+    private final String dtTxt;
+    private final Main main;
+    private final Wind wind;
     @SerializedName("weather")
-    public final List<Description> description;
+    private final List<Description> description;
 
     public Detail(long dt, String dtTxt, Main main, Wind wind, List<Description> description) {
         this.dt = dt;
@@ -47,10 +47,18 @@ public class Detail {
     }
 
     public String getIconCode() {
-        return description.get(0).icon;
+        return description.get(0).getIcon();
     }
 
     public int getTemp(){
-        return (int) main.temp;
+        return (int) main.getTemp();
+    }
+
+    public Main getMain() {
+        return main;
+    }
+
+    public Wind getWind() {
+        return wind;
     }
 }

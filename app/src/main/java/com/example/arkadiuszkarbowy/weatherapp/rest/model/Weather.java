@@ -2,16 +2,17 @@ package com.example.arkadiuszkarbowy.weatherapp.rest.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by arkadiuszkarbowy on 14/09/15.
  */
 public class Weather {
-    public final String name;
-    public final int id;
-    public final Main main;
-    public final Wind wind;
+    private final String name;
+    private final int id;
+    private final Main main;
+    private final Wind wind;
 
     @SerializedName("weather")
     public final List<Description> description;
@@ -24,12 +25,28 @@ public class Weather {
         this.description = description;
     }
 
-
-    public int getCurrentTemp(){
-        return (int) Math.round(main.temp);
+    public Weather(double tempMax, double tempMin, double speed, double pressure, int humidity) {
+        name = null;
+        id = -1;
+        main = new Main(tempMax, tempMax, tempMin, pressure, humidity);
+        wind = new Wind(speed);
+        description = null;
     }
 
-    public String getIconCode(){
-        return description.get(0).icon;
+
+    public int getCurrentTemp() {
+        return (int) Math.round(main.getTemp());
+    }
+
+    public String getIconCode() {
+        return description.get(0).getIcon();
+    }
+
+    public Wind getWind() {
+        return wind;
+    }
+
+    public Main getMain() {
+        return main;
     }
 }

@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
  * Created by arkadiuszkarbowy on 15/09/15.
  */
 public class Main {
-    public final double temp;
+    private final double temp;
     @SerializedName("temp_max")
-    public final double tempMax;
+    private final double tempMax;
     @SerializedName("temp_min")
-    public final double tempMin;
-    public final double pressure;
-    public final int humidity;
+    private final double tempMin;
+    private final double pressure;
+    private final int humidity;
 
     public Main(double temp, double tempMax, double tempMin, double pressure, int humidity) {
         this.temp = temp;
@@ -20,5 +20,25 @@ public class Main {
         this.tempMin = tempMin;
         this.pressure = pressure;
         this.humidity = humidity;
+    }
+
+    public double getTemp() {
+        return temp;
+    }
+
+    public double getTempMax() {
+        return tempMax;
+    }
+
+    public double getTempMin() {
+        return tempMin;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public int getHumidity() {
+        return humidity;
     }
 }

@@ -79,13 +79,13 @@ public class Widget extends AppWidgetProvider {
         @Override
         public void onResponse(Response<Weather> response) {
             mCurrent = response.body();
-            Log.d("CurrentWeather", response.raw().toString());
+            Log.d("Widget", response.raw().toString());
             updateView(mContext, UPDATE_WEATHER);
         }
 
         @Override
         public void onFailure(Throwable t) {
-            Log.d("CurrentWeather", "onResponse failure");
+            Log.d("Widget", " weather onResponse failure");
         }
     };
 
@@ -93,14 +93,14 @@ public class Widget extends AppWidgetProvider {
         @Override
         public void onResponse(Response<Forecast> response) {
             Forecast f = response.body();
-            Log.d("Forecast3", response.raw().toString());
+            Log.d("Widget", response.raw().toString());
             days3 = new Forecast3(f);
             updateView(mContext, UPDATE_FORECAST);
         }
 
         @Override
         public void onFailure(Throwable t) {
-            Log.d("Forecast3", "onResponse failure");
+            Log.d("Widget", " forecast onResponse failure");
         }
     };
 

@@ -27,8 +27,6 @@ import java.util.Set;
  */
 public class TempChart {
     private Context mContext;
-
-
     private LineChartView mChart;
 
     public TempChart(Context context, LineChartView mChart) {
@@ -47,9 +45,7 @@ public class TempChart {
 
     public void setData(Map<String, Float> temps) {
         LineSet data = new LineSet();
-        int[] col = new int[]{Color.YELLOW, Color.RED, Color.GREEN};
-//        data.setFill(mContext.getResources().getColor(R.color.temp_bg));
-        data.setFill(col[new Random().nextInt(3)]);
+        data.setFill(mContext.getResources().getColor(R.color.temp_bg));
         data.setDotsColor(Color.GREEN);
         data.setSmooth(true);
 
@@ -63,10 +59,4 @@ public class TempChart {
     public void show() {
         mChart.show();
     }
-//        mTempChart.setOnEntryClickListener(new OnEntryClickListener() {
-//            @Override
-//            public void onClick(int i, int i1, Rect rect) {
-//                Log.d("OnEntryClickListener", i1 + " " + data.getEntry(i1));
-//            }
-//        });
 }
