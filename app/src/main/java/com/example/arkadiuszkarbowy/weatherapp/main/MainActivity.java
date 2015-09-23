@@ -1,52 +1,34 @@
 package com.example.arkadiuszkarbowy.weatherapp.main;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
-import com.db.chart.listener.OnEntryClickListener;
-import com.db.chart.model.LineSet;
-import com.db.chart.view.AxisController;
 import com.db.chart.view.LineChartView;
 import com.example.arkadiuszkarbowy.weatherapp.R;
-import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Weather;
 import com.example.arkadiuszkarbowy.weatherapp.widget.Widget;
 
-import java.util.Date;
 import java.util.Map;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-
-public class MainActivity extends AppCompatActivity implements CurrentFragment.OnFragmentDataListener {
+public class MainActivity extends AppCompatActivity implements OnFragmentDataListener {
     public static final String CURRENT_CITY = "current_city";
+    private static int DATA_TYPE = 0;
     private TempChart mChart;
     private String mCity = Cities.DEFAULT_CITY;
     private Spinner mCitiesAvailable;
-    WeatherFragment fragment;
+    private WeatherFragment fragment;
     private TextView mTempMin, mTempMax, mWind, mPressure, mHumidity;
 
     @Override
@@ -56,22 +38,24 @@ public class MainActivity extends AppCompatActivity implements CurrentFragment.O
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mCity = prefs.getString(MainActivity.CURRENT_CITY, Cities.DEFAULT_CITY);
-        Log.d("MainActivity", "city: " + mCity);
+        setUpCitiesSpinner();
 
+        DATA_TYPE = WeatherFragment.ACTION_CURRENT_DATA;
         FragmentManager fm = getFragmentManager();
-        fragment = CurrentFragment.newInstance(mCity);
-        fm.beginTransaction().add(R.id.container, (Fragment) fragment).commit();
+        fragment = new CurrentFragment();
+        fm.beginTransaction().add(R.id.container, fragment).commit();
 
+        createInfoView();
+        mChart = new TempChart(this, (LineChartView) findViewById(R.id.chart));
+    }
+
+    private void setUpCitiesSpinner() {
         mCitiesAvailable = (Spinner) findViewById(R.id.cities_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, Cities
                 .getNames());
         mCitiesAvailable.setAdapter(adapter);
         mCitiesAvailable.setOnItemSelectedListener(onCityChangedListener);
         mCitiesAvailable.setSelection(getCityPosition());
-
-        mChart = new TempChart(this, (LineChartView) findViewById(R.id.chart));
-
-        createInfoView();
     }
 
     private void createInfoView() {
@@ -122,23 +106,6 @@ public class MainActivity extends AppCompatActivity implements CurrentFragment.O
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onWeatherInfoUpdate(Weather w) {
         String celcius = getResources().getString(R.string.celcius);
         mTempMax.setText(w.getMain().getTempMax() + " " + celcius);
@@ -153,7 +120,54 @@ public class MainActivity extends AppCompatActivity implements CurrentFragment.O
         if (temps.size() != 0) {
             mChart.setData(temps);
             mChart.show();
-        } else Log.d("MainActivity", "empty set");
+        } else {
+            mChart.dismiss();
+        }
+    }
 
+    @Override
+    public void showViews() {
+        findViewById(R.id.content).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideViews() {
+        findViewById(R.id.content).setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_history) {
+            switch (DATA_TYPE) {
+                case WeatherFragment.ACTION_CURRENT_DATA:
+                    item.setTitle(getResources().getString(R.string.data_current));
+                    DATA_TYPE = WeatherFragment.ACTION_HISTORY_DATA;
+                    break;
+                case WeatherFragment.ACTION_HISTORY_DATA:
+                    item.setTitle(getResources().getString(R.string.data_history));
+                    DATA_TYPE = WeatherFragment.ACTION_CURRENT_DATA;
+                    break;
+            }
+            switchFragmentAccordingToDataType();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void switchFragmentAccordingToDataType() {
+        if (DATA_TYPE == WeatherFragment.ACTION_CURRENT_DATA)
+            fragment = new CurrentFragment();
+        else
+            fragment = new HistoryFragment();
+
+        getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+        updateViews();
     }
 }

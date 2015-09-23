@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.example.arkadiuszkarbowy.weatherapp.main.Cities;
 import com.example.arkadiuszkarbowy.weatherapp.main.Forecast3;
@@ -38,18 +39,7 @@ public class Widget extends AppWidgetProvider {
     private String mCity = Cities.DEFAULT_CITY;
     private Context mContext;
     private Weather mCurrent;
-    private Forecast3 days3;
-
-    @Override
-    public void onEnabled(Context context) {
-        super.onEnabled(context);
-        Log.d("Widget", " widget enabled");
-    }
-
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.d("Widget", "onUpdate");
-    }
+    private Forecast3 mDays3;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -58,12 +48,10 @@ public class Widget extends AppWidgetProvider {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         mCity = prefs.getString(MainActivity.CURRENT_CITY, Cities.DEFAULT_CITY);
-        Log.d("Widget", "onReceive for city " + mCity);
 
         if (intent.getAction().equals(ACTION_UPDATE_LOCATION))
             mCity = intent.getStringExtra(DATA_CITY_NAME);
 
-        Log.d("Widget", "current city is " + mCity);
         prefs.edit().putString(MainActivity.CURRENT_CITY, mCity).commit();
 
 
@@ -85,7 +73,7 @@ public class Widget extends AppWidgetProvider {
 
         @Override
         public void onFailure(Throwable t) {
-            Log.d("Widget", " weather onResponse failure");
+            Toast.makeText(mContext, mContext.getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -94,19 +82,17 @@ public class Widget extends AppWidgetProvider {
         public void onResponse(Response<Forecast> response) {
             Forecast f = response.body();
             Log.d("Widget", response.raw().toString());
-            days3 = new Forecast3(f);
+            mDays3 = new Forecast3(f);
             updateView(mContext, UPDATE_FORECAST);
         }
 
         @Override
         public void onFailure(Throwable t) {
-            Log.d("Widget", " forecast onResponse failure");
+            Toast.makeText(mContext, mContext.getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
         }
     };
 
-
     private void updateView(Context context, int which) {
-        Log.d("Widget", "updateView");
         RemoteViews updateViews = null;
 
         switch (which) {
@@ -123,7 +109,6 @@ public class Widget extends AppWidgetProvider {
     }
 
     private RemoteViews buildWeatherUpdate(Context context) {
-        Log.d("Widget", "buildUpdate");
         Resources res = context.getResources();
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
 
@@ -139,31 +124,28 @@ public class Widget extends AppWidgetProvider {
     }
 
     private RemoteViews buildForecastUpdate(Context context) {
-        Log.d("Widget", "buildUpdate");
         String degree = context.getResources().getString(R.string.degree);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
 
-        views.setImageViewResource(R.id.icon_d1, IconMatcher.getSmallDrawableId(days3.getDay1().getIconCode()));
-        views.setTextViewText(R.id.day_name1, days3.getDay1().getDayName());
-        views.setTextViewText(R.id.temp_max1, days3.getDay1().getTempMax() + degree);
-        views.setTextViewText(R.id.temp_min1, days3.getDay1().getTempMin() + degree);
+        views.setImageViewResource(R.id.icon_d1, IconMatcher.getSmallDrawableId(mDays3.getDay1().getIconCode()));
+        views.setTextViewText(R.id.day_name1, mDays3.getDay1().getDayName());
+        views.setTextViewText(R.id.temp_max1, mDays3.getDay1().getTempMax() + degree);
+        views.setTextViewText(R.id.temp_min1, mDays3.getDay1().getTempMin() + degree);
 
-        views.setImageViewResource(R.id.icon_d2, IconMatcher.getSmallDrawableId(days3.getDay2().getIconCode()));
-        views.setTextViewText(R.id.day_name2, days3.getDay2().getDayName());
-        views.setTextViewText(R.id.temp_max2, days3.getDay2().getTempMax() + degree);
-        views.setTextViewText(R.id.temp_min2, days3.getDay2().getTempMin() + degree);
+        views.setImageViewResource(R.id.icon_d2, IconMatcher.getSmallDrawableId(mDays3.getDay2().getIconCode()));
+        views.setTextViewText(R.id.day_name2, mDays3.getDay2().getDayName());
+        views.setTextViewText(R.id.temp_max2, mDays3.getDay2().getTempMax() + degree);
+        views.setTextViewText(R.id.temp_min2, mDays3.getDay2().getTempMin() + degree);
 
-        views.setImageViewResource(R.id.icon_d3, IconMatcher.getSmallDrawableId(days3.getDay3().getIconCode()));
-        views.setTextViewText(R.id.day_name3, days3.getDay3().getDayName());
-        views.setTextViewText(R.id.temp_max3, days3.getDay3().getTempMax() + degree);
-        views.setTextViewText(R.id.temp_min3, days3.getDay3().getTempMin() + degree);
+        views.setImageViewResource(R.id.icon_d3, IconMatcher.getSmallDrawableId(mDays3.getDay3().getIconCode()));
+        views.setTextViewText(R.id.day_name3, mDays3.getDay3().getDayName());
+        views.setTextViewText(R.id.temp_max3, mDays3.getDay3().getTempMax() + degree);
+        views.setTextViewText(R.id.temp_min3, mDays3.getDay3().getTempMin() + degree);
 
         views.setViewVisibility(R.id.content, View.VISIBLE);
         views.setViewVisibility(R.id.loading, View.GONE);
 
         Intent intent = new Intent(context, MainActivity.class);
-//        intent.putExtra(MainActivity.CURRENT_CITY, mCity);
-//        Log.d("Widget", "sending city" + mCity);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.widget_frame, configPendingIntent);
         return views;

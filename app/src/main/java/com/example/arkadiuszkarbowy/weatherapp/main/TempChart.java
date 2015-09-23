@@ -59,4 +59,8 @@ public class TempChart {
     public void show() {
         mChart.show();
     }
+
+    public void dismiss() {
+        mChart.dismiss();
+    }
 }

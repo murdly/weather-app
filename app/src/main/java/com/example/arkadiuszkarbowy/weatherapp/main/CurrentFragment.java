@@ -1,12 +1,11 @@
 package com.example.arkadiuszkarbowy.weatherapp.main;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.arkadiuszkarbowy.weatherapp.R;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
@@ -15,37 +14,12 @@ import com.example.arkadiuszkarbowy.weatherapp.rest.service.ApiService;
 import com.example.arkadiuszkarbowy.weatherapp.rest.service.RestClient;
 import com.example.arkadiuszkarbowy.weatherapp.widget.IconMatcher;
 
-import java.util.Map;
-
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 
-public class CurrentFragment extends Fragment implements WeatherFragment {
-    private static final String ARG_CITY = "city";
-
-    private String mCity;
+public class CurrentFragment extends WeatherFragment {
     private WeatherBriefController mWeatherBrief;
-    private OnFragmentDataListener mListener;
-
-    public static CurrentFragment newInstance(String city) {
-        CurrentFragment fragment = new CurrentFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_CITY, city);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public CurrentFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mCity = getArguments().getString(ARG_CITY);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,11 +28,10 @@ public class CurrentFragment extends Fragment implements WeatherFragment {
         WeatherBriefView briefView = (WeatherBriefView) view.findViewById(R.id.weather_brief);
         mWeatherBrief = new WeatherBriefController(getActivity(), briefView);
         mWeatherBrief.setOnDaySelectedListener(mOnDaySelectedListener);
-
         return view;
     }
 
-    private DayItemView.OnClickListener mOnDaySelectedListener = new DayItemView.OnClickListener(){
+    private DayItemView.OnClickListener mOnDaySelectedListener = new DayItemView.OnClickListener() {
         @Override
         public void onClick(View v) {
             mWeatherBrief.setSelected((DayItemView) v);
@@ -67,25 +40,8 @@ public class CurrentFragment extends Fragment implements WeatherFragment {
         }
     };
 
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentDataListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentDataListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     @Override
     public void updateDataFor(String city) {
-        Log.d("CurrentFragment", city);
         RestClient rest = new RestClient();
         Call<Weather> call = rest.getApiService().weather(Cities.getId(city), ApiService.UNITS);
         call.enqueue(mCurrentWeather);
@@ -102,11 +58,15 @@ public class CurrentFragment extends Fragment implements WeatherFragment {
             mWeatherBrief.setCurrentTemp(w.getCurrentTemp());
             mWeatherBrief.setCurrentIcon(IconMatcher.getDrawableId(w.getIconCode()));
             mListener.onWeatherInfoUpdate(w);
+            mWeatherBrief.show();
+            mListener.showViews();
         }
 
         @Override
         public void onFailure(Throwable t) {
-            Log.d("CurrentFragment", " forecast failure");
+            mWeatherBrief.hide();
+            mListener.hideViews();
+            Toast.makeText(getActivity(), getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -117,16 +77,15 @@ public class CurrentFragment extends Fragment implements WeatherFragment {
             Forecast3 dailyForecast = new Forecast3(response.body());
             mWeatherBrief.assignForecast(dailyForecast);
             mListener.onChartUpdate(dailyForecast.getDay1().collectDailyTemps());
+            mWeatherBrief.show();
+            mListener.showViews();
         }
 
         @Override
         public void onFailure(Throwable t) {
-            Log.d("CurrentFragment", "forecast failure");
+            mWeatherBrief.hide();
+            mListener.hideViews();
+            Toast.makeText(getActivity(), getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
         }
     };
-
-    public interface OnFragmentDataListener {
-        void onWeatherInfoUpdate(Weather w);
-        void onChartUpdate(Map<String,Float> temps);
-    }
 }
