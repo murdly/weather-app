@@ -13,7 +13,6 @@ import retrofit.http.Query;
  */
 public interface ApiService {
      String UNITS = "metric";
-//     String APPID = "&APPID=b21242744b05bf6ef7aa2fe19a67beb3";
 
      @GET("/data/2.5/weather")
      Call<Weather> weather(@Query("id") String id, @Query("units") String units);

@@ -12,13 +12,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.arkadiuszkarbowy.weatherapp.R;
+import com.example.arkadiuszkarbowy.weatherapp.widget.IconMatcher;
 
 import java.util.ArrayList;
 
 /**
  * Created by arkadiuszkarbowy on 22/09/15.
  */
-public class WeatherBriefView extends LinearLayout {
+public class BriefView extends LinearLayout {
     private Context mContext;
     private LinearLayout mIconTempContainer;
     private ImageView mCrrIcon;
@@ -26,22 +27,23 @@ public class WeatherBriefView extends LinearLayout {
     private FrameLayout mSeparationLine;
     private LinearLayout mDailyItemsContainer;
     private ArrayList<DayItemView> mDailyItems;
+    private DayItemView mSelected;
 
-    public WeatherBriefView(Context context) {
+    public BriefView(Context context) {
         super(context);
         mContext = context;
         init();
         buildView();
     }
 
-    public WeatherBriefView(Context context, AttributeSet attrs) {
+    public BriefView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         init();
         buildView();
     }
 
-    public WeatherBriefView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BriefView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
         init();
@@ -100,7 +102,6 @@ public class WeatherBriefView extends LinearLayout {
         mIconTempContainer.addView(mCrrIcon);
         mIconTempContainer.addView(mCrrTemp);
         addView(mIconTempContainer);
-
         addView(mSeparationLine);
 
         for (DayItemView item : mDailyItems)
@@ -129,22 +130,37 @@ public class WeatherBriefView extends LinearLayout {
         mCrrIcon.setImageResource(drawableId);
     }
 
-    public DayItemView getDailyItem(int i) {
-        return mDailyItems.get(i);
-    }
-
     public void setDailyItemSelectedListener(OnClickListener mOnDaySelectedListener) {
         for (DayItemView item : mDailyItems)
             item.setOnClickListener(mOnDaySelectedListener);
     }
 
-    public int indexOf(DayItemView mSelected) {
+    public int indexOfSelectedItem() {
         return mDailyItems.indexOf(mSelected);
     }
 
-    public void markSelections(DayItemView old, DayItemView fresh) {
-        if (old != null)
-            old.setBackgroundColor(0);
+    public void markSelections(DayItemView fresh) {
+        if (mSelected != null)
+            mSelected.setBackgroundColor(0);
+
         fresh.setBackgroundColor(getResources().getColor(R.color.selection));
+        mSelected = fresh;
+    }
+
+    public void updateDaily(ArrayList<Forecast3.Day> days) {
+        for (int i = 0; i < days.size(); i++) {
+            Forecast3.Day day = days.get(i);
+            DayItemView item = mDailyItems.get(i);
+            item.setIcon(IconMatcher.getSmallDrawableId(day
+                    .getIconCode()));
+            item.setName(day.getDayName());
+            String degree = mContext.getResources().getString(R.string.degree);
+            item.setTempMax(day.getTempMax() + degree);
+            item.setTempMin(day.getTempMin() + degree);
+        }
+    }
+
+    public void setFirstItemSelected() {
+        mSelected = mDailyItems.get(0);
     }
 }

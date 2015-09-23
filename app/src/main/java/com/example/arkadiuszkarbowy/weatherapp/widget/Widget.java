@@ -18,7 +18,6 @@ import com.example.arkadiuszkarbowy.weatherapp.main.Cities;
 import com.example.arkadiuszkarbowy.weatherapp.main.Forecast3;
 import com.example.arkadiuszkarbowy.weatherapp.R;
 import com.example.arkadiuszkarbowy.weatherapp.main.MainActivity;
-import com.example.arkadiuszkarbowy.weatherapp.main.WeatherBriefView;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Weather;
 import com.example.arkadiuszkarbowy.weatherapp.rest.service.ApiService;

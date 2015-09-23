@@ -4,7 +4,7 @@
               android:layout_height="wrap_content"
               android:orientation="horizontal">
 
-    <com.example.arkadiuszkarbowy.weatherapp.main.WeatherBriefView
+    <com.example.arkadiuszkarbowy.weatherapp.main.BriefView
         android:id="@+id/weather_brief"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

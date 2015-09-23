@@ -12,31 +12,30 @@ import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Weather;
 import com.example.arkadiuszkarbowy.weatherapp.rest.service.ApiService;
 import com.example.arkadiuszkarbowy.weatherapp.rest.service.RestClient;
-import com.example.arkadiuszkarbowy.weatherapp.widget.IconMatcher;
 
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 
 public class CurrentFragment extends WeatherFragment {
-    private WeatherBriefController mWeatherBrief;
+    private BriefController mBriefController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_current, container, false);
-        WeatherBriefView briefView = (WeatherBriefView) view.findViewById(R.id.weather_brief);
-        mWeatherBrief = new WeatherBriefController(getActivity(), briefView);
-        mWeatherBrief.setOnDaySelectedListener(mOnDaySelectedListener);
+        BriefView briefView = (BriefView) view.findViewById(R.id.weather_brief);
+        mBriefController = new BriefController(getActivity(), briefView);
+        mBriefController.setOnDayViewItemSelectedListener(mOnDaySelectedListener);
         return view;
     }
 
     private DayItemView.OnClickListener mOnDaySelectedListener = new DayItemView.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mWeatherBrief.setSelected((DayItemView) v);
-            mListener.onChartUpdate(mWeatherBrief.collectTempsOfSelectedDay());
-            mListener.onWeatherInfoUpdate(mWeatherBrief.createWeatherObject());
+            mBriefController.setDayItemSelected((DayItemView) v);
+            mListener.onChartUpdate(mBriefController.collectTempsOfSelectedDay());
+//            mListener.onWeatherInfoUpdate(mBriefController.createWeatherObject());
         }
     };
 
@@ -55,16 +54,16 @@ public class CurrentFragment extends WeatherFragment {
         public void onResponse(Response<Weather> response) {
             Log.d("CurrentFragment", response.raw().toString());
             Weather w = response.body();
-            mWeatherBrief.setCurrentTemp(w.getCurrentTemp());
-            mWeatherBrief.setCurrentIcon(IconMatcher.getDrawableId(w.getIconCode()));
+            mBriefController.assignWeatherModel(w);
+            mBriefController.updateWeatherView();
+            mBriefController.showView();
             mListener.onWeatherInfoUpdate(w);
-            mWeatherBrief.show();
             mListener.showViews();
         }
 
         @Override
         public void onFailure(Throwable t) {
-            mWeatherBrief.hide();
+            mBriefController.hideView();
             mListener.hideViews();
             Toast.makeText(getActivity(), getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
         }
@@ -74,16 +73,18 @@ public class CurrentFragment extends WeatherFragment {
         @Override
         public void onResponse(Response<Forecast> response) {
             Log.d("CurrentFragment", response.raw().toString());
-            Forecast3 dailyForecast = new Forecast3(response.body());
-            mWeatherBrief.assignForecast(dailyForecast);
-            mListener.onChartUpdate(dailyForecast.getDay1().collectDailyTemps());
-            mWeatherBrief.show();
+            Forecast3 f = new Forecast3(response.body());
+            mBriefController.assignForecastModel(f);
+            mBriefController.updateForecastView();
+//            mListener.onChartUpdate(f.getDay1().collectDailyTemps());
+            mBriefController.showView();
+            mListener.onChartUpdate(mBriefController.collectTempsOfSelectedDay());
             mListener.showViews();
         }
 
         @Override
         public void onFailure(Throwable t) {
-            mWeatherBrief.hide();
+            mBriefController.hideView();
             mListener.hideViews();
             Toast.makeText(getActivity(), getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
         }
