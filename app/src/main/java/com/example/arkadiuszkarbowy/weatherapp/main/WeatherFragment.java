@@ -10,7 +10,6 @@ public abstract class WeatherFragment extends Fragment{
     public static final int ACTION_CURRENT_DATA = 1;
     public static final int ACTION_HISTORY_DATA = 2;
 
-
     protected OnFragmentDataListener mListener;
 
     abstract void updateDataFor(String city);

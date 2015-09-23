@@ -18,6 +18,7 @@ import com.example.arkadiuszkarbowy.weatherapp.main.Cities;
 import com.example.arkadiuszkarbowy.weatherapp.main.Forecast3;
 import com.example.arkadiuszkarbowy.weatherapp.R;
 import com.example.arkadiuszkarbowy.weatherapp.main.MainActivity;
+import com.example.arkadiuszkarbowy.weatherapp.main.WeatherBriefView;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Forecast;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Weather;
 import com.example.arkadiuszkarbowy.weatherapp.rest.service.ApiService;
@@ -112,7 +113,7 @@ public class Widget extends AppWidgetProvider {
         Resources res = context.getResources();
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
 
-        views.setTextViewText(R.id.temp, mCurrent.getCurrentTemp() + res.getString(R.string.celcius));
+        views.setTextViewText(R.id.temp, mCurrent.getCurrentTemp() + res.getString(R.string.celsius));
         views.setImageViewResource(R.id.crr_icon, IconMatcher.getDrawableId(mCurrent.getIconCode()));
         views.setTextViewText(R.id.city, mCity);
 
@@ -125,23 +126,20 @@ public class Widget extends AppWidgetProvider {
 
     private RemoteViews buildForecastUpdate(Context context) {
         String degree = context.getResources().getString(R.string.degree);
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
 
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
         views.setImageViewResource(R.id.icon_d1, IconMatcher.getSmallDrawableId(mDays3.getDay1().getIconCode()));
         views.setTextViewText(R.id.day_name1, mDays3.getDay1().getDayName());
         views.setTextViewText(R.id.temp_max1, mDays3.getDay1().getTempMax() + degree);
         views.setTextViewText(R.id.temp_min1, mDays3.getDay1().getTempMin() + degree);
-
         views.setImageViewResource(R.id.icon_d2, IconMatcher.getSmallDrawableId(mDays3.getDay2().getIconCode()));
         views.setTextViewText(R.id.day_name2, mDays3.getDay2().getDayName());
         views.setTextViewText(R.id.temp_max2, mDays3.getDay2().getTempMax() + degree);
         views.setTextViewText(R.id.temp_min2, mDays3.getDay2().getTempMin() + degree);
-
         views.setImageViewResource(R.id.icon_d3, IconMatcher.getSmallDrawableId(mDays3.getDay3().getIconCode()));
         views.setTextViewText(R.id.day_name3, mDays3.getDay3().getDayName());
         views.setTextViewText(R.id.temp_max3, mDays3.getDay3().getTempMax() + degree);
         views.setTextViewText(R.id.temp_min3, mDays3.getDay3().getTempMin() + degree);
-
         views.setViewVisibility(R.id.content, View.VISIBLE);
         views.setViewVisibility(R.id.loading, View.GONE);
 

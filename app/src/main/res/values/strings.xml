@@ -16,7 +16,7 @@
     <string name="d6">so</string>
     <string name="d7">nd</string>
 
-    <string name="celcius">\u00B0C</string>
+    <string name="celsius">\u00B0C</string>
     <string name="degree">\u00B0</string>
     <string name="perc">%</string>
     <string name="ms"> m/s</string>

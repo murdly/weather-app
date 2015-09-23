@@ -27,9 +27,7 @@ import retrofit.Callback;
 import retrofit.Response;
 
 public class HistoryFragment extends WeatherFragment {
-    private Calendar mCalendar;
     private TextView mDate;
-    private Button mSearch;
     private String mCity;
 
     public HistoryFragment() {
@@ -39,12 +37,10 @@ public class HistoryFragment extends WeatherFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
-        mCalendar = Calendar.getInstance();
-        mSearch = (Button) view.findViewById(R.id.show);
+        Button mSearch = (Button) view.findViewById(R.id.show);
         mSearch.setOnClickListener(onHistoryDataListener);
         mDate = (TextView) view.findViewById(R.id.date);
         mDate.setOnClickListener(new DateListener());
-
         mListener.hideViews();
         return view;
     }
@@ -69,7 +65,7 @@ public class HistoryFragment extends WeatherFragment {
     private Callback<Forecast> mHistoryDumb = new Callback<Forecast>() {
         @Override
         public void onResponse(Response<Forecast> response) {
-            Log.d("CurrentFragment", response.raw().toString());
+            Log.d("HistoryFragment", response.raw().toString());
             Forecast3 dailyForecast = new Forecast3(response.body());
             mListener.onChartUpdate(dailyForecast.getDay3().collectDailyTemps());
             mListener.onWeatherInfoUpdate(new Weather(23d, 13d, 5d, 999d, 55));
@@ -92,8 +88,9 @@ public class HistoryFragment extends WeatherFragment {
         DatePickerDialog.OnDateSetListener mDateListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mCalendar.set(year, monthOfYear, dayOfMonth);
-                String date = new SimpleDateFormat("EEE, MMM d, ''yy").format(mCalendar.getTime());
+                Calendar c = Calendar.getInstance();
+                c.set(year, monthOfYear, dayOfMonth);
+                String date = new SimpleDateFormat("EEE, MMM d, ''yy").format(c.getTime());
                 mDate.setText(date);
             }
         };
@@ -102,7 +99,6 @@ public class HistoryFragment extends WeatherFragment {
         public void onClick(View v) {
             DatePickerFragment.newInstance(mDateListener).show(getFragmentManager(), "date");
         }
-
     }
 
     public static class DatePickerFragment extends DialogFragment {

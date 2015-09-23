@@ -7,12 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.example.arkadiuszkarbowy.weatherapp.R;
+
 /**
  * Created by arkadiuszkarbowy on 16/09/15.
  */
 public class IconMatcher {
-    private static final Map<String, Integer> DRAWABLE_IDS= createMap();
-    private static final Map<String, Integer> SMALL_DRAWABLE_IDS= createMap2();
+    private static final Map<String, Integer> DRAWABLE_IDS = createMap();
+    private static final Map<String, Integer> SMALL_DRAWABLE_IDS = createMap2();
 
     private static Map<String, Integer> createMap() {
         Map<String, Integer> result = new HashMap<String, Integer>();
@@ -44,11 +45,11 @@ public class IconMatcher {
         return Collections.unmodifiableMap(result);
     }
 
-    public static int getDrawableId(String code){
+    public static int getDrawableId(String code) {
         return DRAWABLE_IDS.get(code.substring(0, code.length() - 1));
     }
 
-    public static int getSmallDrawableId(String code){
-        return SMALL_DRAWABLE_IDS.get(code.substring(0, code.length()-1));
+    public static int getSmallDrawableId(String code) {
+        return SMALL_DRAWABLE_IDS.get(code.substring(0, code.length() - 1));
     }
 }

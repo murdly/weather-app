@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 
 import com.example.arkadiuszkarbowy.weatherapp.R;
-import com.example.arkadiuszkarbowy.weatherapp.rest.model.Main;
 import com.example.arkadiuszkarbowy.weatherapp.rest.model.Weather;
 import com.example.arkadiuszkarbowy.weatherapp.widget.IconMatcher;
 
@@ -15,35 +14,35 @@ import java.util.Map;
  * Created by arkadiuszkarbowy on 22/09/15.
  */
 public class WeatherBriefController {
-    private WeatherBriefView view;
+    private WeatherBriefView mView;
     private Context mContext;
     private Forecast3 forecast;
     private DayItemView mSelected;
 
     public WeatherBriefController(Context context, WeatherBriefView view) {
-        this.view = view;
+        this.mView = view;
         mContext = context;
     }
 
     public void setCurrentTemp(int currentTemp) {
-        view.setCurrentTemp(currentTemp + mContext.getResources().getString(R.string.celcius));
+        mView.setCurrentTemp(currentTemp + mContext.getResources().getString(R.string.celsius));
     }
 
     public void setCurrentIcon(int drawableId) {
-        view.setCurrentIcon(drawableId);
+        mView.setCurrentIcon(drawableId);
     }
 
     public void assignForecast(Forecast3 forecast) {
         this.forecast = forecast;
         updateDailyView();
-        setSelected(view.getDailyItem(0));
+        setSelected(mView.getDailyItem(0));
     }
 
     private void updateDailyView() {
         ArrayList<Forecast3.Day> days = forecast.get3Days();
         for (int i = 0; i < days.size(); i++) {
             Forecast3.Day day = days.get(i);
-            DayItemView item = view.getDailyItem(i);
+            DayItemView item = mView.getDailyItem(i);
             item.setIcon(IconMatcher.getSmallDrawableId(day
                     .getIconCode()));
             item.setName(day.getDayName());
@@ -54,11 +53,11 @@ public class WeatherBriefController {
     }
 
     public void setOnDaySelectedListener(DayItemView.OnClickListener mOnDaySelectedListener) {
-        view.setDailyItemSelectedListener(mOnDaySelectedListener);
+        mView.setDailyItemSelectedListener(mOnDaySelectedListener);
     }
 
     public void setSelected(DayItemView dayItemView) {
-        view.markSelections(mSelected, dayItemView);
+        mView.markSelections(mSelected, dayItemView);
         mSelected = dayItemView;
     }
 
@@ -67,7 +66,7 @@ public class WeatherBriefController {
     }
 
     private Forecast3.Day getSelectedDayForecast() {
-        int index = view.indexOf(mSelected);
+        int index = mView.indexOf(mSelected);
         return forecast.getDay(index);
     }
 
@@ -82,10 +81,10 @@ public class WeatherBriefController {
     }
 
     public void hide() {
-        view.setVisibility(View.INVISIBLE);
+        mView.setVisibility(View.INVISIBLE);
     }
 
     public void show() {
-        view.setVisibility(View.VISIBLE);
+        mView.setVisibility(View.VISIBLE);
     }
 }

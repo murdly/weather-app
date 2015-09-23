@@ -25,6 +25,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements OnFragmentDataListener {
     public static final String CURRENT_CITY = "current_city";
     private static int DATA_TYPE = 0;
+
     private TempChart mChart;
     private String mCity = Cities.DEFAULT_CITY;
     private Spinner mCitiesAvailable;
@@ -39,14 +40,16 @@ public class MainActivity extends AppCompatActivity implements OnFragmentDataLis
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mCity = prefs.getString(MainActivity.CURRENT_CITY, Cities.DEFAULT_CITY);
         setUpCitiesSpinner();
+        setCurrentDataAsDefault();
+        createInfoView();
+        mChart = new TempChart(this, (LineChartView) findViewById(R.id.chart));
+    }
 
+    private void setCurrentDataAsDefault() {
         DATA_TYPE = WeatherFragment.ACTION_CURRENT_DATA;
         FragmentManager fm = getFragmentManager();
         fragment = new CurrentFragment();
         fm.beginTransaction().add(R.id.container, fragment).commit();
-
-        createInfoView();
-        mChart = new TempChart(this, (LineChartView) findViewById(R.id.chart));
     }
 
     private void setUpCitiesSpinner() {
@@ -54,16 +57,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentDataLis
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, Cities
                 .getNames());
         mCitiesAvailable.setAdapter(adapter);
-        mCitiesAvailable.setOnItemSelectedListener(onCityChangedListener);
+        mCitiesAvailable.setOnItemSelectedListener(onCitySelectedListener);
         mCitiesAvailable.setSelection(getCityPosition());
-    }
-
-    private void createInfoView() {
-        mTempMin = (TextView) findViewById(R.id.temp_min);
-        mTempMax = (TextView) findViewById(R.id.temp_max);
-        mWind = (TextView) findViewById(R.id.wind);
-        mPressure = (TextView) findViewById(R.id.pressure);
-        mHumidity = (TextView) findViewById(R.id.humidity);
     }
 
     private int getCityPosition() {
@@ -74,7 +69,15 @@ public class MainActivity extends AppCompatActivity implements OnFragmentDataLis
         return -1;
     }
 
-    AdapterView.OnItemSelectedListener onCityChangedListener = new AdapterView.OnItemSelectedListener() {
+    private void createInfoView() {
+        mTempMin = (TextView) findViewById(R.id.temp_min);
+        mTempMax = (TextView) findViewById(R.id.temp_max);
+        mWind = (TextView) findViewById(R.id.wind);
+        mPressure = (TextView) findViewById(R.id.pressure);
+        mHumidity = (TextView) findViewById(R.id.humidity);
+    }
+
+    AdapterView.OnItemSelectedListener onCitySelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             mCity = (String) parent.getSelectedItem();
@@ -89,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentDataLis
 
     private void updateViews() {
         fragment.updateDataFor(mCity);
-
     }
 
     private void notifyWidget() {
@@ -107,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentDataLis
 
     @Override
     public void onWeatherInfoUpdate(Weather w) {
-        String celcius = getResources().getString(R.string.celcius);
-        mTempMax.setText(w.getMain().getTempMax() + " " + celcius);
-        mTempMin.setText(w.getMain().getTempMin() + " " + celcius);
+        String celsius = getResources().getString(R.string.celsius);
+        mTempMax.setText(w.getMain().getTempMax() + " " + celsius);
+        mTempMin.setText(w.getMain().getTempMin() + " " + celsius);
         mWind.setText(w.getWind().getSpeed() + " " + getResources().getString(R.string.ms));
         mPressure.setText(w.getMain().getPressure() + " " + getResources().getString(R.string.hpa));
         mHumidity.setText(w.getMain().getHumidity() + " " + getResources().getString(R.string.perc));

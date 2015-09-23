@@ -19,7 +19,6 @@ import java.util.ArrayList;
  * Created by arkadiuszkarbowy on 22/09/15.
  */
 public class WeatherBriefView extends LinearLayout {
-    private LayoutInflater mInflater;
     private Context mContext;
     private LinearLayout mIconTempContainer;
     private ImageView mCrrIcon;
@@ -30,7 +29,6 @@ public class WeatherBriefView extends LinearLayout {
 
     public WeatherBriefView(Context context) {
         super(context);
-        mInflater = LayoutInflater.from(context);
         mContext = context;
         init();
         buildView();
@@ -38,7 +36,6 @@ public class WeatherBriefView extends LinearLayout {
 
     public WeatherBriefView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mInflater = LayoutInflater.from(context);
         mContext = context;
         init();
         buildView();
@@ -46,7 +43,6 @@ public class WeatherBriefView extends LinearLayout {
 
     public WeatherBriefView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mInflater = LayoutInflater.from(context);
         mContext = context;
         init();
         buildView();
@@ -85,7 +81,7 @@ public class WeatherBriefView extends LinearLayout {
         mIconTempContainer.setOrientation(VERTICAL);
     }
 
-    private void customizeDailyItemsLayout(){
+    private void customizeDailyItemsLayout() {
         LinearLayout.LayoutParams line = new LinearLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources()
                 .getDisplayMetrics()), LayoutParams.MATCH_PARENT);
         int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources()
@@ -138,9 +134,8 @@ public class WeatherBriefView extends LinearLayout {
     }
 
     public void setDailyItemSelectedListener(OnClickListener mOnDaySelectedListener) {
-        for (DayItemView item : mDailyItems) {
+        for (DayItemView item : mDailyItems)
             item.setOnClickListener(mOnDaySelectedListener);
-        }
     }
 
     public int indexOf(DayItemView mSelected) {
@@ -148,7 +143,7 @@ public class WeatherBriefView extends LinearLayout {
     }
 
     public void markSelections(DayItemView old, DayItemView fresh) {
-        if(old != null)
+        if (old != null)
             old.setBackgroundColor(0);
         fresh.setBackgroundColor(getResources().getColor(R.color.selection));
     }
