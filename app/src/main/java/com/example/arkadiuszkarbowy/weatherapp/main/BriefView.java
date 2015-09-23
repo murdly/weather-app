@@ -162,5 +162,6 @@ public class BriefView extends LinearLayout {
 
     public void setFirstItemSelected() {
         mSelected = mDailyItems.get(0);
+        markSelections(mSelected);
     }
 }

@@ -35,7 +35,7 @@ public class CurrentFragment extends WeatherFragment {
         public void onClick(View v) {
             mBriefController.setDayItemSelected((DayItemView) v);
             mListener.onChartUpdate(mBriefController.collectTempsOfSelectedDay());
-//            mListener.onWeatherInfoUpdate(mBriefController.createWeatherObject());
+            mListener.onWeatherInfoUpdate(mBriefController.createWeatherObject());
         }
     };
 
@@ -76,7 +76,7 @@ public class CurrentFragment extends WeatherFragment {
             Forecast3 f = new Forecast3(response.body());
             mBriefController.assignForecastModel(f);
             mBriefController.updateForecastView();
-//            mListener.onChartUpdate(f.getDay1().collectDailyTemps());
+            mListener.onChartUpdate(f.getDay1().collectDailyTemps());
             mBriefController.showView();
             mListener.onChartUpdate(mBriefController.collectTempsOfSelectedDay());
             mListener.showViews();

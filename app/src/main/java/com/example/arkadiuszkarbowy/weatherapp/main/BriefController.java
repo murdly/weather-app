@@ -17,7 +17,6 @@ public class BriefController {
     private Context mContext;
     private Forecast3 forecastModel;
     private Weather weatherModel;
-//    private DayItemView mSelected;
 
     public BriefController(Context context, BriefView view) {
         this.mView = view;

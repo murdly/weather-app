@@ -17,7 +17,7 @@ public class Cities {
         result.put("Konin", "3095321");
         result.put("Poznań", "3088171");
         result.put("Warszawa", "756135");
-        result.put("Kraków", "3085041");
+        result.put("Berlin", "7290252");
 
         return Collections.unmodifiableMap(result);
     }
