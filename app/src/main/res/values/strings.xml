@@ -1,8 +1,11 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
-
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Pogoda</string>
+    <string name="no_connection">Brak połączenia</string>
+    <string name="data_history">Dane historyczne</string>
+    <string name="data_current">Dane bieżące</string>
     <string name="choose_city">Wybierz miasto</string>
+    <string name="choose_date">Ustaw datę</string>
+    <string name="show">Pokaż</string>
     <string name="ok">Wybierz</string>
     <string name="cancel">Anuluj</string>
     <string name="d1">pn</string>

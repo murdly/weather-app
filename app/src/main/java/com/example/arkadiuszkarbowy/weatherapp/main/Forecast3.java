@@ -72,8 +72,8 @@ public class Forecast3 {
     public class Day {
         private List<Detail> details;
         private Map<String, Float> temps;
-        int tempMax;
-        int tempMin;
+        private int tempMax;
+        private int tempMin;
 
         public Day(List<Detail> details) {
             this.details = details;
