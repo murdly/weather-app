@@ -140,8 +140,7 @@ public class BriefView extends LinearLayout {
     }
 
     public void markSelections(DayItemView fresh) {
-        if (mSelected != null)
-            mSelected.setBackgroundColor(0);
+        unselectIfAny();
 
         fresh.setBackgroundColor(getResources().getColor(R.color.selection));
         mSelected = fresh;
@@ -161,7 +160,13 @@ public class BriefView extends LinearLayout {
     }
 
     public void setFirstItemSelected() {
+        unselectIfAny();
         mSelected = mDailyItems.get(0);
         markSelections(mSelected);
+    }
+
+    private void unselectIfAny() {
+        if (mSelected != null)
+            mSelected.setBackgroundColor(0);
     }
 }
